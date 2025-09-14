@@ -87,9 +87,9 @@
   
 
 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
   
 <meta name="generator" content="Hexo 7.3.0"></head>
-
 
 <body>
   
@@ -286,7 +286,7 @@
 <li>四次挥手：在终止TCP连接时，一方（假设是客户端）向另一方（服务器端）发送一个FIN（结束）标志的数据包，表示要关闭连接，另一方收到后会回复一个ACK标志的数据包，表示收到了关闭请求。然后另一方再发送一个FIN标志的数据包给第一方，表示同意关闭连接，最后第一方再发送一个ACK标志的数据包，表示接收到了对方的关闭请求。这样就完成了四次挥手，终止了连接。</li>
 </ul>
 <h2 id="TCP出现三次挥手是什么情况，会有什么影响？">TCP出现三次挥手是什么情况，会有什么影响？</h2>
-<p>当第四次挥手（Client的ACK）丢失或Server未收到ACK时，会出现三次挥手的情况。<br>
+<p>当第四次挥手（Client的ACK）丢失或Server未收到ACK时，会出现三次挥手的情况。
 三次挥手的影响：</p>
 <ul>
 <li>Server端资源泄露,最终导致端口耗尽，无法提供服务。</li>
@@ -301,13 +301,13 @@
 <li>避免资源浪费</li>
 </ul>
 <h2 id="OSI模型下每层常见的协议有哪些？">OSI模型下每层常见的协议有哪些？</h2>
-<p>具体内容会在协议八股文内介绍，此外会有详细的协议的介绍。如果时间充足的话。<br>
-应用层：<strong>HTTP/HTTPS</strong>，<strong>DHCP</strong><br>
-表示层：<strong>TLS/SSL</strong><br>
-会话层：RPC，SSH<br>
-传输层：<strong>TCP,UDP</strong><br>
-网络层：IP,ICMP,<strong>OSPF/BGP</strong>,<strong>ARP</strong>，<strong>IPsec</strong><br>
-数据链路层：Ethernet,WiFi，VLAN，HDLC<br>
+<p>具体内容会在协议八股文内介绍，此外会有详细的协议的介绍。如果时间充足的话。
+应用层：<strong>HTTP/HTTPS</strong>，<strong>DHCP</strong>
+表示层：<strong>TLS/SSL</strong>
+会话层：RPC，SSH
+传输层：<strong>TCP,UDP</strong>
+网络层：IP,ICMP,<strong>OSPF/BGP</strong>,<strong>ARP</strong>，<strong>IPsec</strong>
+数据链路层：Ethernet,WiFi，VLAN，HDLC
 物理层：IEEE 802.3</p>
 <h2 id="TCP的拥塞控制算法有哪些，请你详细介绍这些算法？">TCP的拥塞控制算法有哪些，请你详细介绍这些算法？</h2>
 <p>TCP的拥塞控制算法从远到近主要有：慢启动，拥塞避免，快重传，快恢复，CUBIC​算法，BIC算法，Vegas​算法，Veno​算法，BBR算法</p>
@@ -330,8 +330,8 @@
 <li>终端防护措施：静态ARP绑定，安装ARP防火墙</li>
 </ul>
 <h2 id="什么是ICMP协议">什么是ICMP协议?</h2>
-<p>ICMP是TCP/IP协议族中网络层的协议，主要用于传输网络层控制消息的协议来达到<strong>对网络信息进行诊断</strong>，以及<strong>发送错误报告</strong>的目的。<br>
-⽐如ping 和traceroute就是通过icmp来对评估⽹络连接质量以及揭示数据包在⽹络的传输路径的来达到网络信息诊断的目的的。比如当数据包⽆法到达目的地时，路由器或目标主机就会发送目的地不可达消息，有助于识别网络问题，通过这种方式来达到发送错误报告的目的。<br>
+<p>ICMP是TCP/IP协议族中网络层的协议，主要用于传输网络层控制消息的协议来达到<strong>对网络信息进行诊断</strong>，以及<strong>发送错误报告</strong>的目的。
+⽐如ping 和traceroute就是通过icmp来对评估⽹络连接质量以及揭示数据包在⽹络的传输路径的来达到网络信息诊断的目的的。比如当数据包⽆法到达目的地时，路由器或目标主机就会发送目的地不可达消息，有助于识别网络问题，通过这种方式来达到发送错误报告的目的。
 举个例子，我要和同事的一台电脑进行通信。我会首先ping一下他的电脑，首次ping肯定是失败的，由于没有学到ARP表项，会通过ARP协议进行学习，将同事的IP地址和MAC地址的映射到本地的网络层，有一个ARP表存储的ARP表项，然后我就可以知道IP和对应的MAC地址，后续的PING出去的ICMP报文就可以顺利到达同事，成功通信。目前的ICMP分为ICMP4和ICMP6，对应IP协议的V4和V6版本。</p>
 <h2 id="如何解决TCP的粘包">如何解决TCP的粘包?</h2>
 <p>解决TCP的粘包问题有以下几个方法：</p>
@@ -356,8 +356,8 @@
 <li>优化应用程序逻辑：根据应用程序的需求，优化客户端和服务器之间的通信逻辑，以减少不必要的连接创建和关闭。例如，可以使用长连接（keep-alive）或WebSocket 等技术来保持连接，减少 TIME_WAIT 状态的数量。</li>
 </ul>
 <h2 id="https是如何进行加密的？">https是如何进行加密的？</h2>
-<p>HTTPS 的加密机制是通过 ​SSL/TLS 协议实现的，结合了对称加密、非对称加密、数字证书和密钥交换技术，确保数据在传输过程中的机密性、完整性和身份真实性。<br>
-流程：<br>
+<p>HTTPS 的加密机制是通过 ​SSL/TLS 协议实现的，结合了对称加密、非对称加密、数字证书和密钥交换技术，确保数据在传输过程中的机密性、完整性和身份真实性。
+流程：
 TCP 连接建立-&gt;TLS 握手协商(​Client Hello,Server Hello,​证书验证,密钥交换,生成会话密钥)-&gt;加密数据传输</p>
 <h2 id="讲⼀下红⿊树的特性以及它和⼆插搜索树的区别">讲⼀下红⿊树的特性以及它和⼆插搜索树的区别?</h2>
 <ul>
@@ -492,15 +492,21 @@ TCP 连接建立-&gt;TLS 握手协商(​Client Hello,Server Hello,​证书验�
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/07/24/c++%E5%85%AB%E8%82%A1%E6%96%87/" title="c++八股文">
+                      <a href="/2025/07/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%85%AB%E8%82%A1%E6%96%87/" title="操作系统八股文">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">c++八股文</span>
+                        <span class="hidden-mobile">操作系统八股文</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
                   </article>
                   <article class="post-next col-6">
                     
+                    
+                      <a href="/2025/07/24/c++%E5%85%AB%E8%82%A1%E6%96%87/" title="c++八股文">
+                        <span class="hidden-mobile">c++八股文</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
                     
                   </article>
                 </div>

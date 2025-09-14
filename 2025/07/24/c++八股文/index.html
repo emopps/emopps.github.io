@@ -87,9 +87,9 @@
   
 
 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
   
 <meta name="generator" content="Hexo 7.3.0"></head>
-
 
 <body>
   
@@ -281,8 +281,8 @@
                 
                 <h1>C++八股文</h1>
 <h2 id="C-面向对象的三大特性">C++面向对象的三大特性</h2>
-<p><strong>封装</strong>：隐藏实现细节，实现模块化。控制访问权限，private仅对自己和友元开放，protected开放给子类，public开放给所有对象。<br>
-<strong>继承</strong>：无需修改原有类的情况下实现对功能的扩展。存在三种继承，即private继承，protected继承和public继承，解决基类在子类中最高权限的问题(即基类中是public，子类中为private，则权限在子类中修改为private级别，也可以使用using去修改权限)，还可以做多继承和接口继承。<br>
+<p><strong>封装</strong>：隐藏实现细节，实现模块化。控制访问权限，private仅对自己和友元开放，protected开放给子类，public开放给所有对象。
+<strong>继承</strong>：无需修改原有类的情况下实现对功能的扩展。存在三种继承，即private继承，protected继承和public继承，解决基类在子类中最高权限的问题(即基类中是public，子类中为private，则权限在子类中修改为private级别，也可以使用using去修改权限)，还可以做多继承和接口继承。
 <strong>多态</strong>：一个接口多种形态，通过实现接口重用增加可扩展性。分为静态多态和动态多态。</p>
 <ul>
 <li>静态多态：函数重载</li>
@@ -296,12 +296,12 @@
 </ul>
 <p><strong>动态多态</strong>指的是在<strong>运行时</strong>根据对象的实际类型确定要调用的函数。动态多态实现的方法是<strong>虚函数重写和抽象类</strong>。虚函数是指在基类中定义的函数可以被派生类重写的函数。通过将函数声明为虚函数，我们可以在运行时根据对象的实际类型来确定要调用的函数实现。在C++中，只要将函数声明为虚函数即可实现动态多态。抽象类是指包含至少一个纯虚函数的类，这个类不能被实例化，只能用作基类来派生出其他类。在C++中，可以通过将函数声明为纯虚函数来实现抽象类。其原理就是早绑定和晚绑定。早绑定即编译时确定调用函数的地址，晚绑定即类使用virtual函数时生成虚表存放虚函数的地址，类对象构造时进行初始化。</p>
 <h2 id="C-指针和引用的区别？">C++指针和引用的区别？</h2>
-<p>在 C++中，引用本身并不占用额外的内存空间。当你传递一个变量作为引用参数给函数时，函数内部会使用该引用来直接操作原始变量，而不是创建原始变量的副本。因此，使用引用可以避免不必要的数据复制，提高程序的效率。引用的内部实现通常是通过指针来完成的，因此在函数调用时，引用本身并不会在栈上分配额外的内存空间，只是会使用一个指针来指向原始变量的内存地址。总结起来，引用不占用函数栈内存，但会占用一个指针的大小。<br>
+<p>在 C++中，引用本身并不占用额外的内存空间。当你传递一个变量作为引用参数给函数时，函数内部会使用该引用来直接操作原始变量，而不是创建原始变量的副本。因此，使用引用可以避免不必要的数据复制，提高程序的效率。引用的内部实现通常是通过指针来完成的，因此在函数调用时，引用本身并不会在栈上分配额外的内存空间，只是会使用一个指针来指向原始变量的内存地址。总结起来，引用不占用函数栈内存，但会占用一个指针的大小。
 指针与引用的区别：</p>
 <ul>
 <li>指针本身是一个对象，允许进行赋值和拷贝等操作。</li>
 <li>指针的生命周期内可以指向几个不同的对象，引用不可以。</li>
-<li>指针不需要在定义时赋初值。<br>
+<li>指针不需要在定义时赋初值。
 需要注意的是，引用在底层实现上通常被编译器实现为指针，但是在使用时更类似于被引用的变量本身。引用在编译时会被转换为指针。引用在被使用的使用会占用4个字节大小的内存空间，也就是一个指针的大小</li>
 </ul>
 <h2 id="C-的构造函数能否定义为虚函数？">C++的构造函数能否定义为虚函数？</h2>
@@ -411,7 +411,7 @@
 <li>.C++以C为基础，包含了C语⾔部分。区块，语句，预处理器，内置数据类型，数组，指针等特性都是来⾃于C。</li>
 <li>C++包含了⾯向对象的特性，⽐如封装，继承，多态，virtual函数的特性。</li>
 <li>C++包含了泛型编程的部分。</li>
-<li>C++包含了STL部分。<br>
+<li>C++包含了STL部分。
 总之，C++是在C语⾔基础上，包含了其它特性⽽发展⽽来的，相⽐C语⾔来说更加灵活和复杂。</li>
 </ul>
 <h2 id="前置-返回的是左值还是右值，后置-呢？字符串字面量呢">前置++返回的是左值还是右值，后置++呢？字符串字面量呢?</h2>
@@ -423,15 +423,15 @@
 <h2 id="右值引用是如何提⾼性能的？">右值引用是如何提⾼性能的？</h2>
 <p>右值引⽤主要是通过避免不必要的拷贝操作来提高代码的性能的。</p>
 <h2 id="介绍⼀下RVO？">介绍⼀下RVO？</h2>
-<p>RVO（ReturnValueOptimization）是⼀种编译器优化技术，用于消除不必要的临时对象拷贝，提高代码的性能。RVO主要针对函数返回局部对象的情况，通过优化，可以避免创建临时对象并执行拷贝构造函数。<br>
+<p>RVO（ReturnValueOptimization）是⼀种编译器优化技术，用于消除不必要的临时对象拷贝，提高代码的性能。RVO主要针对函数返回局部对象的情况，通过优化，可以避免创建临时对象并执行拷贝构造函数。
 RVO的<strong>基本思想</strong>是：在函数调用栈上直接构造返回值，而不是先构造⼀个局部对象，然后再拷贝到调用者的栈空间。这样可以减少临时对象的创建和销毁，提高代码的运行效率。</p>
 <h2 id="如果一个class的this指针被删除后强行访问会有什么影响？">如果一个class的this指针被删除后强行访问会有什么影响？</h2>
 <p>会出现崩溃或者输出乱码值</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br><span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">C</span><br>&#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-type">int</span> data = <span class="hljs-number">42</span>; <span class="hljs-comment">// 假设有一个成员变量</span><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">destroy</span><span class="hljs-params">()</span></span><br><span class="hljs-function">    </span>&#123;<br>        <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>; <span class="hljs-comment">// 销毁对象</span><br>    &#125;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span><br><span class="hljs-function"></span>&#123;<br>    C *obj = <span class="hljs-keyword">new</span> <span class="hljs-built_in">C</span>();<br>    obj-&gt;<span class="hljs-built_in">destroy</span>();<br>    cout &lt;&lt; <span class="hljs-string">&quot;强行访问 obj-&gt;data: &quot;</span> &lt;&lt; obj-&gt;data &lt;&lt; endl;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
-<p>输出结果：<br>
+<p>输出结果：
 <img src="image.png" srcset="/img/loading.gif" lazyload alt="alt text"></p>
 <h2 id="volatile关键字的作用？">volatile关键字的作用？</h2>
-<p>volatile关键字的作用就是防止编译器优化，编译器每次读变量的值都从内存直接读取最新值且写操作时直接写入内存。该关键字不保证线程安全。如果目的是实现原子操作推荐atomic。<br>
+<p>volatile关键字的作用就是防止编译器优化，编译器每次读变量的值都从内存直接读取最新值且写操作时直接写入内存。该关键字不保证线程安全。如果目的是实现原子操作推荐atomic。
 适用场景：</p>
 <ul>
 <li>硬件寄存器访问：硬件寄存器的值可能被外部设备随时修改（如传感器、GPIO 状态）</li>
@@ -469,29 +469,29 @@ RVO的<strong>基本思想</strong>是：在函数调用栈上直接构造返回
 <h2 id="虚函数和纯虚函数的区别？">虚函数和纯虚函数的区别？</h2>
 <ul>
 <li>虚函数是实现C++运行时多态的核心机制，通过virtual关键字声明，当通过基类指针或引用调用虚函数时，会根据对象的实际类型动态绑定到正确的函数实现。虚函数可以有默认实现，派生类可以选择性重写，包含虚函数的类可以实例化。</li>
-<li>纯虚函数通过在虚函数声明后加=0定义，没有默认实现，强制派生类必须重写。包含纯虚函数的类称为抽象类，不能实例化，纯虚函数用于定义接口规范，确保所有派生类都有该功能。<br>
+<li>纯虚函数通过在虚函数声明后加=0定义，没有默认实现，强制派生类必须重写。包含纯虚函数的类称为抽象类，不能实例化，纯虚函数用于定义接口规范，确保所有派生类都有该功能。
 代码：</li>
 </ul>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br>usingnamespacestd;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Animal</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-type">void</span> <span class="hljs-title">speak</span><span class="hljs-params">()</span> </span>&#123;  <span class="hljs-comment">// 虚函数，有默认实现</span><br>        cout &lt;&lt; <span class="hljs-string">&quot;Animal sound&quot;</span> &lt;&lt; endl;<br>    &#125;<br>    <span class="hljs-keyword">virtual</span> ~<span class="hljs-built_in">Animal</span>() &#123;&#125;  <span class="hljs-comment">// 虚析构函数</span><br>&#125;;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Dog</span> :<span class="hljs-keyword">public</span> Animal &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">speak</span><span class="hljs-params">()</span> <span class="hljs-keyword">override</span> </span>&#123;  <span class="hljs-comment">// 重写虚函数</span><br>        cout &lt;&lt; <span class="hljs-string">&quot;Woof!&quot;</span> &lt;&lt; endl;<br>    &#125;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    Animal* animal = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Dog</span>();<br>    animal-&gt;<span class="hljs-built_in">speak</span>();  <span class="hljs-comment">// 输出: Woof!</span><br>    <span class="hljs-keyword">delete</span> animal;<br>    return0;<br>&#125;<br></code></pre></td></tr></table></figure>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;iostream&gt;</span></span><br>usingnamespacestd;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Shape</span> &#123;<span class="hljs-comment">// 抽象基类</span><br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-type">void</span> <span class="hljs-title">draw</span><span class="hljs-params">()</span> </span>= <span class="hljs-number">0</span>;  <span class="hljs-comment">// 纯虚函数，无实现</span><br>    <span class="hljs-keyword">virtual</span> ~<span class="hljs-built_in">Shape</span>() &#123;&#125;<br>&#125;;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Circle</span> :<span class="hljs-keyword">public</span> Shape &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">draw</span><span class="hljs-params">()</span> <span class="hljs-keyword">override</span> </span>&#123;  <span class="hljs-comment">// 必须实现纯虚函数</span><br>        cout &lt;&lt; <span class="hljs-string">&quot;Drawing a circle&quot;</span> &lt;&lt; endl;<br>    &#125;<br>&#125;;<br><br><span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>&#123;<br>    <span class="hljs-comment">// Shape shape;  // 错误: 不能实例化抽象类</span><br>    Shape* shape = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Circle</span>();<br>    shape-&gt;<span class="hljs-built_in">draw</span>();  <span class="hljs-comment">// 输出: Drawing a circle</span><br>    <span class="hljs-keyword">delete</span> shape;<br>    return0;<br>&#125;<br></code></pre></td></tr></table></figure>
 <h2 id="怎么解决菱形继承？">怎么解决菱形继承？</h2>
-<p>C++具备多重继承，导致会出现菱形继承的问题。<br>
-一个子类继承自多个父类，多个父类本身也可以继承自同一个基类。<br>
-菱形继承会导致二义性，存储空间浪费的问题。<br>
+<p>C++具备多重继承，导致会出现菱形继承的问题。
+一个子类继承自多个父类，多个父类本身也可以继承自同一个基类。
+菱形继承会导致二义性，存储空间浪费的问题。
 解决方法：</p>
 <ul>
 <li>虚继承：子类只继承一次父类的父类。在中间基类继承父共同基类时加上virtual关键词。其实现原理就是<strong>依靠虚基类表</strong>，编译器为每个虚继承的类生成一个虚基类指针，指向这个虚基类表。虚基类表存储偏移量，用于在运行时定位共享基类成员的位置对象。</li>
 </ul>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Derived1</span> : <span class="hljs-keyword">virtual</span> <span class="hljs-keyword">public</span> Base &#123;&#125;; <span class="hljs-comment">// 虚继承</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Derived2</span> : <span class="hljs-keyword">virtual</span> <span class="hljs-keyword">public</span> Base &#123;&#125;; <span class="hljs-comment">// 虚继承</span><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MostDerived</span> : <span class="hljs-keyword">public</span> Derived1, <span class="hljs-keyword">public</span> Derived2 &#123;&#125;;<br></code></pre></td></tr></table></figure>
 <h2 id="override和final关键字的作用？">override和final关键字的作用？</h2>
-<p>解决不能阻止某个虚函数进一步重写的问题。<br>
-override:显式标记派生类中的函数是对基类虚函数的覆盖（重写），并强制编译器检查函数签名是否完全匹配。核心机制是签名检查(编译器验证派生类函数的签名是否与基类虚函数一致）和避免假重写。<br>
+<p>解决不能阻止某个虚函数进一步重写的问题。
+override:显式标记派生类中的函数是对基类虚函数的覆盖（重写），并强制编译器检查函数签名是否完全匹配。核心机制是签名检查(编译器验证派生类函数的签名是否与基类虚函数一致）和避免假重写。
 final:禁止类被继承或虚函数被进一步重写，锁定设计意图。修饰类则类不可被继承。修饰虚函数则虚函数在派生类中不可再被重写。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Base</span> &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-type">void</span> <span class="hljs-title">print</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span> <span class="hljs-type">const</span></span>; <span class="hljs-comment">// 基类虚函数</span><br>&#125;;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Derived</span> : <span class="hljs-keyword">public</span> Base &#123;<br><span class="hljs-keyword">public</span>:<br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">print</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span> <span class="hljs-type">const</span> <span class="hljs-keyword">override</span></span>; <span class="hljs-comment">// ✅ 正确覆盖</span><br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">print</span><span class="hljs-params">(<span class="hljs-type">double</span> x)</span> <span class="hljs-keyword">override</span></span>;    <span class="hljs-comment">// ❌ 编译错误：参数类型不匹配</span><br>&#125;;<br></code></pre></td></tr></table></figure>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">class</span> <span class="hljs-title class_">Base</span> &#123;  <br><span class="hljs-keyword">public</span>:  <br>    <span class="hljs-function"><span class="hljs-keyword">virtual</span> <span class="hljs-type">void</span> <span class="hljs-title">foo</span><span class="hljs-params">()</span> <span class="hljs-keyword">final</span></span>;  <br>&#125;;  <br><span class="hljs-keyword">class</span> <span class="hljs-title class_">Derived</span> : <span class="hljs-keyword">public</span> Base &#123;  <br>    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">foo</span><span class="hljs-params">()</span> <span class="hljs-keyword">override</span></span>; <span class="hljs-comment">// ❌ 编译错误：foo是final的[3,9](@ref)  </span><br>&#125;;  <br></code></pre></td></tr></table></figure>
 <h2 id="C-类型推导的作用和用法？">C++类型推导的作用和用法？</h2>
-<p>C++作为一种强类型语言，类型匹配比较麻烦，所以借助编译器来处理类型推导比较好，提升编码效率。<br>
-<strong>auto</strong>：用于变量的类型的推导，初始化一个值然后去推导变量的类型。如果是使用auto定义多个变量，多个变量必须是同一类型。类型推导会丢失引用和cv语义，可以使用auto&amp;保留，万能引用auto&amp;&amp;,会根据初始值属性判断是左值还是右值引用。常见于lambda表达式。<br>
+<p>C++作为一种强类型语言，类型匹配比较麻烦，所以借助编译器来处理类型推导比较好，提升编码效率。
+<strong>auto</strong>：用于变量的类型的推导，初始化一个值然后去推导变量的类型。如果是使用auto定义多个变量，多个变量必须是同一类型。类型推导会丢失引用和cv语义，可以使用auto&amp;保留，万能引用auto&amp;&amp;,会根据初始值属性判断是左值还是右值引用。常见于lambda表达式。
 <strong>decltype</strong>:推导表达式的类型（保留所有信息)</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">int</span> a = <span class="hljs-number">10</span>;<br><span class="hljs-keyword">decltype</span>(a) b = <span class="hljs-number">20</span>;     <span class="hljs-comment">// b 为 int</span><br><span class="hljs-keyword">decltype</span>(a + <span class="hljs-number">3.14</span>) c;   <span class="hljs-comment">// c 为 double[5](@ref)</span><br></code></pre></td></tr></table></figure>
 <h2 id="function-lambda-bind之间的关系？">function,lambda,bind之间的关系？</h2>
@@ -602,13 +602,13 @@ final:禁止类被继承或虚函数被进一步重写，锁定设计意图。�
 </ul>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-type">void</span>* memory = <span class="hljs-keyword">operator</span> <span class="hljs-built_in">new</span>(<span class="hljs-built_in">sizeof</span>(MyClass));  <span class="hljs-comment">// 调用malloc分配内存</span><br>MyClass* obj = <span class="hljs-built_in">new</span> (memory) <span class="hljs-built_in">MyClass</span>();    <span class="hljs-comment">// 在memory地址调用构造函数</span><br></code></pre></td></tr></table></figure>
 <h2 id="不相关的进程间能否使用管道实现通信？">不相关的进程间能否使用管道实现通信？</h2>
-<p>不相关的进程之间可以通过<strong>命名管道</strong>实现通信。<br>
-命名管道：<br>
-命名管道通过 mkfifo() 或 mknod() 系统调用创建，在文件系统中生成一个特殊的 ​FIFO 文件​（如 ./myfifo）。该文件不存储实际数据，仅作为内核中管道缓冲区的访问入口。<br>
+<p>不相关的进程之间可以通过<strong>命名管道</strong>实现通信。
+命名管道：
+命名管道通过 mkfifo() 或 mknod() 系统调用创建，在文件系统中生成一个特殊的 ​FIFO 文件​（如 ./myfifo）。该文件不存储实际数据，仅作为内核中管道缓冲区的访问入口。
 任何进程只要知道该文件路径，即可通过 open() 打开管道进行读写，无需亲缘关系。进程以写模式（O_WRONLY）打开管道，调用 write() 向管道写入数据。另一进程以读模式（O_RDONLY）打开管道，调用 read() 从管道读取数据。</p>
 <h2 id="协程是什么？">协程是什么？</h2>
-<p>C++协程（Coroutine）是C++20引入的一种轻量级并发编程机制，它允许函数在执行过程中暂停（挂起）并在稍后恢复，而无需依赖操作系统线程调度，从而简化异步编程、提高资源利用率。<br>
-协程是一种特殊函数，可在执行中主动挂起，保存当前状态（局部变量、执行位置等），后续通过协程句柄恢复执行。<br>
+<p>C++协程（Coroutine）是C++20引入的一种轻量级并发编程机制，它允许函数在执行过程中暂停（挂起）并在稍后恢复，而无需依赖操作系统线程调度，从而简化异步编程、提高资源利用率。
+协程是一种特殊函数，可在执行中主动挂起，保存当前状态（局部变量、执行位置等），后续通过协程句柄恢复执行。
 C++20采用<strong>无栈协程模型</strong>，挂起时将上下文（局部变量、寄存器状态）存储在堆上</p>
 <h2 id="C-的重载和C语言的区别在哪里？具体是如何实现？">C++的重载和C语言的区别在哪里？具体是如何实现？</h2>
 <ul>
@@ -667,7 +667,7 @@ C++20采用<strong>无栈协程模型</strong>，挂起时将上下文（局部�
 <p>两者均为容器尾部添加元素的方法，但<strong>底层机制</strong>和<strong>适用场景</strong>不同。</p>
 <ul>
 <li>push_back:先构造临时对象，再拷贝/移动到容器中.</li>
-<li>emplace_back:​直接在容器内存中构造对象，避免临时对象创建和拷贝/移动。减少了构造临时对象这一步，性能更优。不支持初始化列表，存在隐式类型转换风险。<br>
+<li>emplace_back:​直接在容器内存中构造对象，避免临时对象创建和拷贝/移动。减少了构造临时对象这一步，性能更优。不支持初始化列表，存在隐式类型转换风险。
 结论：emplace_back的效率相对更高，因此在代码中<strong>尽量用emplace_back</strong>代替push_back。</li>
 </ul>
 <h2 id="deque和vector的区别？内存布局有啥区别？">deque和vector的区别？内存布局有啥区别？</h2>
@@ -676,15 +676,15 @@ C++20采用<strong>无栈协程模型</strong>，挂起时将上下文（局部�
 <li>vector:​单块连续内存，元素<strong>物理地址连续</strong>,容量不足时，重新分配一块更大的连续内存,严格连续，支持直接传递首地址。操作集中在尾部。</li>
 </ul>
 <h2 id="weak-ptr如何解决循环引用？">weak_ptr如何解决循环引用？</h2>
-<p>weak_ptr 是 C++11 引入的智能指针，专为配合 shared_ptr 解决循环引用问题而设计，同时提供安全的对象访问机制。循环引用指两个或多个对象通过 shared_ptr 相互持有，导致引用计数无法归零，对象无法释放。<br>
+<p>weak_ptr 是 C++11 引入的智能指针，专为配合 shared_ptr 解决循环引用问题而设计，同时提供安全的对象访问机制。循环引用指两个或多个对象通过 shared_ptr 相互持有，导致引用计数无法归零，对象无法释放。
 weak_ptr 通过​<strong>非拥有式观察</strong>打破循环。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs c++"><span class="hljs-keyword">class</span> <span class="hljs-title class_">A</span> &#123;<br>    std::shared_ptr&lt;B&gt; b_ptr;<br>&#125;;<br><span class="hljs-keyword">class</span> <span class="hljs-title class_">B</span> &#123;<br>    <span class="hljs-comment">/*出现循环引用*/</span><br>    <span class="hljs-comment">//std::shared_ptr&lt;A&gt; a_ptr;</span><br>    <span class="hljs-comment">/*修改为 weak_ptr解决循环引用*/</span><br>    std::weak_ptr&lt;A&gt; a_ptr;  <br>&#125;;<br></code></pre></td></tr></table></figure>
 <h2 id="weak-ptr如何升级为shared-ptr？">weak_ptr如何升级为shared_ptr？</h2>
 <p>weak_ptr 通过 lock() 方法安全升级为 shared_ptr，确保访问对象时其未被销毁。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs c++">std::weak_ptr&lt;A&gt; weak_a = ...;  <span class="hljs-comment">// 从某处获取 weak_ptr</span><br><span class="hljs-keyword">if</span> (<span class="hljs-keyword">auto</span> shared_a = weak_a.<span class="hljs-built_in">lock</span>()) &#123;  <span class="hljs-comment">// 尝试升级</span><br>    shared_a-&gt;<span class="hljs-built_in">do_something</span>();       <span class="hljs-comment">// 对象存活，安全访问</span><br>&#125; <span class="hljs-keyword">else</span> &#123;<br>    <span class="hljs-comment">// 对象已销毁，避免悬垂指针</span><br>&#125;<br></code></pre></td></tr></table></figure>
-<p>weak_ptr 通过控制块中的​弱引用计数​感知对象状态：<br>
-​构造时​：复制 shared_ptr 的控制块指针，弱引用计数 +1。<br>
-​析构时​：弱引用计数 -1，若弱引用计数和强引用计数均为 0，释放控制块。<br>
+<p>weak_ptr 通过控制块中的​弱引用计数​感知对象状态：
+​构造时​：复制 shared_ptr 的控制块指针，弱引用计数 +1。
+​析构时​：弱引用计数 -1，若弱引用计数和强引用计数均为 0，释放控制块。
 ​<strong>lock() 时</strong>​：检查控制块中的强引用计数，决定是否构造新 shared_ptr。</p>
 <h2 id="C-的左值和右值是如何使用的？">C++的左值和右值是如何使用的？</h2>
 <ul>
@@ -978,9 +978,9 @@ int main()
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/07/24/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%85%AB%E8%82%A1%E6%96%87/" title="操作系统八股文">
+                      <a href="/2025/07/24/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%85%AB%E8%82%A1%E6%96%87/" title="计算机网络八股文">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">操作系统八股文</span>
+                        <span class="hidden-mobile">计算机网络八股文</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -988,8 +988,8 @@ int main()
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/07/24/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E5%85%AB%E8%82%A1%E6%96%87/" title="计算机网络八股文">
-                        <span class="hidden-mobile">计算机网络八股文</span>
+                      <a href="/2024/04/16/loglog-test/" title="O(n log log n)公式测试">
+                        <span class="hidden-mobile">O(n log log n)公式测试</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
