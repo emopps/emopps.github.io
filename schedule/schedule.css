@@ -37,8 +37,8 @@
 
 #calendar-week {
   height: 1.2rem;
-  font-size: 14px;
-  letter-spacing: 1px;
+  font-size: 12px;
+  letter-spacing: 0.5px;
   font-weight: 700;
   align-items: center;
   display: flex;
@@ -46,33 +46,33 @@
 
 #calendar-date {
   height: 3rem;
-  line-height: 1.3;
-  font-size: 64px;
-  letter-spacing: 3px;
+  line-height: 1.2;
+  font-size: 44px;
+  letter-spacing: 2px;
   color: var(--efu-main);
   font-weight: 700;
   align-items: center;
   display: flex;
   position: absolute;
-  top: calc(50% - 2.1rem);
+  top: calc(50% - 1.8rem);
 }
 
 #calendar-lunar,
 #calendar-solar {
   height: 1rem;
-  font-size: 12px;
+  font-size: 11px;
+  color: var(--efu-secondtext);
   align-items: center;
   display: flex;
   position: absolute;
 }
 
 #calendar-solar {
-  bottom: 2.1rem;
+  bottom: 1.2rem;
 }
 
 #calendar-lunar {
-  bottom: 1rem;
-  color: var(--efu-secondtext);
+  bottom: 0.5rem;
 }
 
 #calendar-main a {

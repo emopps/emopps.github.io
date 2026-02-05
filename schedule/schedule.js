@@ -163,7 +163,7 @@ function cardTimes() {
     const c = e.querySelector("#calendar-main");
     const l = e.querySelector("#calendar-date");
 
-    l.style.fontSize = ["64px", "48px", "36px"][Math.min(o - 3, 2)];
+    l.style.fontSize = ["46px", "40px", "34px"][Math.min(o - 3, 2)];
 
     for (let i = 0; i < o; i++) {
       if (!c.querySelector(`.calendar-r${i}`)) {
