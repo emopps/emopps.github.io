@@ -1,17 +1,28 @@
 class MusicPlayer {
     constructor() {
         this._onKeydown = this.handleKeydown.bind(this);
+        this._onResize = this.handleResize.bind(this);
         this._coverObserver = null;
         this._lastLrcIndex = -1;
         this._lastListRect = null;
+
         this._coverUrlCache = new Map();
         this._coverFetchInFlight = new Set();
         this._coverDebugDone = new Set();
+        this._manualLrcScrollUntil = 0;
+        this._lrcUserScrollBound = false;
+        this._listStyleFixed = false;
+        this._resizeRaf = 0;
+        this._lrcTimeEnhanced = false;
+        this._lrcTimeObserver = null;
+        this._aplayerRef = null;
+        this._lrcTimeHideTimer = 0;
+        this._activeLrcTimeP = null;
         this.init();
     }
 
     init() {
-        document.documentElement.style.setProperty('--vh', `${window.innerHeight}px`);
+        this.updateViewportVars(true);
         this.getCustomPlayList();
         this.addEventListeners();
         this.waitForAplayerDom();
@@ -23,6 +34,95 @@ class MusicPlayer {
 
     addEventListeners() {
         document.addEventListener("keydown", this._onKeydown);
+        window.addEventListener('resize', this._onResize, { passive: true });
+        try {
+            if (window.visualViewport && window.visualViewport.addEventListener) {
+                window.visualViewport.addEventListener('resize', this._onResize, { passive: true });
+            }
+        } catch (e) {}
+    }
+
+    handleResize() {
+        this.updateViewportVars(false);
+    }
+
+    updateViewportVars(isInit) {
+        try {
+            if (this._resizeRaf) {
+                try { cancelAnimationFrame(this._resizeRaf); } catch (e) {}
+            }
+
+            this._resizeRaf = requestAnimationFrame(() => {
+                this._resizeRaf = 0;
+
+                const h = Math.max(1, window.innerHeight || 1);
+                document.documentElement.style.setProperty('--vh', `${h}px`);
+
+                // Compute bottom safe area so panels never get covered by the controller.
+                const controller = document.querySelector('#Music-page .aplayer-controller') || document.querySelector('.aplayer-controller');
+                const body = document.querySelector('#Music-page .aplayer-body') || document.querySelector('.aplayer-body');
+                const list = document.querySelector('#Music-page .aplayer .aplayer-list') || document.querySelector('.aplayer-list');
+                const lrc = document.querySelector('#Music-page .aplayer-lrc') || document.querySelector('.aplayer-lrc');
+
+                let safe = 128; // default fallback
+                const gap = 16;
+
+                if (controller) {
+                    const c = controller.getBoundingClientRect();
+                    const fromBottom = Math.max(0, h - c.top);
+                    safe = Math.max(safe, Math.ceil(fromBottom + gap));
+
+                    // If list/lrc overlaps controller, grow safe area accordingly.
+                    const checkOverlap = (el) => {
+                        if (!el) return;
+                        const r = el.getBoundingClientRect();
+                        const overlap = Math.max(0, r.bottom - c.top);
+                        if (overlap > 0) safe = Math.max(safe, Math.ceil(overlap + gap));
+                    };
+                    checkOverlap(list);
+                    checkOverlap(lrc);
+                    checkOverlap(body);
+                }
+
+                document.body && document.body.style && document.body.style.setProperty('--music-controller-safe', `${safe}px`);
+
+                // Update lyric container height variable for first/last line centering
+                if (lrc) {
+                    const lrcHeight = lrc.clientHeight || lrc.getBoundingClientRect().height || h * 0.6;
+                    document.documentElement.style.setProperty('--lyric-wrap-height', `${lrcHeight}px`);
+                }
+
+                // Controller offsets should adapt to visible playlist and viewport size/zoom.
+                try {
+                    const isMobile = window.matchMedia && window.matchMedia('(max-width: 798px)').matches;
+                    let controllerRight = 0;
+                    if (!isMobile) {
+                        // Reserve space for right playlist panel if present/visible.
+                        if (list) {
+                            const r = list.getBoundingClientRect();
+                            const style = getComputedStyle(list);
+                            const hidden = style.display === 'none' || style.visibility === 'hidden' || style.opacity === '0' || r.width < 10;
+                            if (!hidden) controllerRight = Math.ceil(r.width + 24);
+                        }
+                    }
+                    // Bottom gap scales with height: clamp between 12 and 38.
+                    const bottomGap = isMobile ? 120 : Math.max(12, Math.min(38, Math.round(h * 0.04)));
+                    document.body && document.body.style && document.body.style.setProperty('--music-controller-right', `${controllerRight}px`);
+                    document.body && document.body.style && document.body.style.setProperty('--music-controller-bottom', `${bottomGap}px`);
+                } catch (e) {}
+
+                // Keep rounding fix applied after size changes.
+                try { this.fixPlaylistPanelStyle(); } catch (e) {}
+
+                // Re-center current lyric after layout changes, but avoid fighting user scroll.
+                if (!isInit) {
+                    try {
+                        this._lastLrcIndex = -1;
+                        this.lrcUpdate();
+                    } catch (e) {}
+                }
+            });
+        } catch (e) {}
     }
 
     waitForAplayerDom() {
@@ -34,6 +134,7 @@ class MusicPlayer {
 
             if (aplayerList) {
                 hasList = true;
+                this.fixPlaylistPanelStyle();
             }
 
             if (cover) {
@@ -45,6 +146,37 @@ class MusicPlayer {
             if (hasCover && hasList) clearInterval(timer);
         }, 200);
         setTimeout(() => clearInterval(timer), 12000);
+    }
+
+    fixPlaylistPanelStyle() {
+        try {
+            const list = document.querySelector('#Music-page .aplayer .aplayer-list') || document.querySelector('.aplayer-list');
+            if (!list) return;
+
+            // Inline style to bypass theme CSS specificity (Windows/Chrome/Edge).
+            list.style.borderRadius = '16px';
+            list.style.overflow = 'hidden';
+            list.style.clipPath = 'inset(0 round 16px)';
+
+            // Ensure inner list doesn't visually break rounding.
+            const ol = list.querySelector('ol');
+            if (ol) {
+                ol.style.margin = '0';
+                ol.style.padding = '0';
+                ol.style.background = 'transparent';
+            }
+
+            if (this._listStyleFixed) return;
+            this._listStyleFixed = true;
+
+            // Re-apply if APlayer toggles list state or rewrites DOM.
+            try {
+                const mo = new MutationObserver(() => {
+                    try { this.fixPlaylistPanelStyle(); } catch (e) {}
+                });
+                mo.observe(list, { attributes: true, childList: true, subtree: true });
+            } catch (e) {}
+        } catch (e) {}
     }
 
     bindCoverObserver(coverEl) {
@@ -289,35 +421,340 @@ class MusicPlayer {
     }
 
     addEventListenerChangeMusicBg() {
-        const aplayer = document.querySelector("#Music-page meting-js").aplayer;
-        aplayer.on('loadeddata', () => this.changeMusicBg(true));
-        aplayer.on('timeupdate', this.lrcUpdate.bind(this));
+        try {
+            const meting = document.querySelector("#Music-page meting-js") || document.querySelector("meting-js");
+            const aplayer = meting && meting.aplayer;
+            if (!aplayer || !aplayer.on) return;
+            aplayer.on('loadeddata', () => this.changeMusicBg(true));
+            aplayer.on('timeupdate', () => {
+                try { requestAnimationFrame(() => this.lrcUpdate()); } catch (e) { this.lrcUpdate(); }
+            });
+            this.bindLrcUserScroll();
+            this.bindLrcTimeJump(aplayer);
+        } catch (e) {}
+    }
+
+    bindLrcTimeJump(aplayer) {
+        try {
+            this._aplayerRef = aplayer || null;
+            const wrap = document.querySelector('#Music-page .aplayer-lrc') || document.querySelector('.aplayer-lrc');
+            const contents = document.querySelector('#Music-page .aplayer-lrc-contents') || document.querySelector('.aplayer-lrc-contents');
+            if (!wrap || !contents) return;
+
+            const enhance = () => {
+                try { this.enhanceLrcTimeNodes(aplayer); } catch (e) {}
+            };
+
+            enhance();
+
+            if (this._lrcTimeObserver) return;
+            this._lrcTimeObserver = new MutationObserver(() => {
+                try { enhance(); } catch (e) {}
+            });
+            this._lrcTimeObserver.observe(contents, { childList: true, subtree: true });
+        } catch (e) {}
+    }
+
+    enhanceLrcTimeNodes(aplayer) {
+        const debug = !!window.__musicLrcTimeDebug;
+
+        const contents = document.querySelector('#Music-page .aplayer-lrc-contents') || document.querySelector('.aplayer-lrc-contents');
+        if (!contents) return;
+
+        const pNodes = Array.from(contents.querySelectorAll('p'));
+        if (!pNodes.length) return;
+
+        const parsed = this.getAplayerLrcParsed(aplayer);
+        if (debug && !this._lrcTimeEnhanced) {
+            try {
+                console.log('[music-lrc-time] pNodes=', pNodes.length);
+                console.log('[music-lrc-time] parsed=', parsed && parsed.length, 'aplayer.lrc keys=', aplayer && aplayer.lrc ? Object.keys(aplayer.lrc) : null);
+                console.log('[music-lrc-time] parsed sample=', parsed && parsed[0]);
+                console.log('[music-lrc-time] aplayer.lrc.parsed typeof=', aplayer && aplayer.lrc ? typeof aplayer.lrc.parsed : null);
+                console.log('[music-lrc-time] aplayer.lrc.parsed raw=', aplayer && aplayer.lrc ? aplayer.lrc.parsed : null);
+                console.log('[music-lrc-time] first p outerHTML=', pNodes[0] ? pNodes[0].outerHTML : null);
+            } catch (e) {}
+        }
+
+        for (let i = 0; i < pNodes.length; i++) {
+            const p = pNodes[i];
+            if (!p || p.classList.contains('aplayer-lrc-contents')) continue;
+            if (p.querySelector(':scope > .music-lrc-time')) continue;
+
+            let t = null;
+            if (parsed && parsed[i] && typeof parsed[i].time === 'number') t = parsed[i].time;
+
+            const span = document.createElement('span');
+            span.className = 'music-lrc-time';
+            if (typeof t === 'number' && isFinite(t) && t >= 0) {
+                span.textContent = this.formatTime(t);
+                span.dataset.time = String(t);
+                span.tabIndex = 0;
+                span.setAttribute('role', 'button');
+                span.setAttribute('aria-label', 'Jump to ' + span.textContent);
+            } else {
+                span.textContent = '';
+                span.dataset.time = '';
+            }
+
+            span.addEventListener('click', (ev) => {
+                try { ev.stopPropagation(); ev.preventDefault(); } catch (e) {}
+                const sec = parseFloat(span.dataset.time || '');
+                if (!(sec >= 0)) return;
+                this._manualLrcScrollUntil = Date.now() + 1200;
+                this.seekAplayer(aplayer, sec);
+                if (debug) {
+                    try { console.log('[music-lrc-time] seek', sec, '=>', span.textContent); } catch (e) {}
+                }
+            }, { passive: false });
+
+            span.addEventListener('keydown', (ev) => {
+                if (ev.key !== 'Enter' && ev.key !== ' ') return;
+                try { ev.preventDefault(); } catch (e) {}
+                try { span.click(); } catch (e) {}
+            });
+
+            p.appendChild(span);
+        }
+
+        this._lrcTimeEnhanced = true;
+    }
+
+    getAplayerLrcParsed(aplayer) {
+        try {
+            const lrc = aplayer && aplayer.lrc;
+            if (!lrc) return null;
+            const rawCandidates = [
+                lrc.parsed,
+                lrc.lrc && lrc.lrc.parsed,
+                lrc.lrc && lrc.lrc.lines,
+                lrc.lines,
+                lrc.current
+            ];
+
+            for (const c of rawCandidates) {
+                // 1) Array candidates
+                if (Array.isArray(c) && c.length) {
+                    const out = this.normalizeParsedLrcArray(c);
+                    if (out && out.length) return out;
+                }
+                // 2) Object candidates with lines
+                if (c && typeof c === 'object' && !Array.isArray(c)) {
+                    const maybeLines = c.lines || c.parsed || c.lrc;
+                    if (Array.isArray(maybeLines) && maybeLines.length) {
+                        const out2 = this.normalizeParsedLrcArray(maybeLines);
+                        if (out2 && out2.length) return out2;
+                    }
+                }
+                // 3) String candidate: raw LRC
+                if (typeof c === 'string' && c.trim()) {
+                    const out3 = this.parseLrcString(c);
+                    if (out3 && out3.length) return out3;
+                }
+            }
+        } catch (e) {}
+        return null;
+    }
+
+    normalizeParsedLrcArray(arr) {
+        try {
+            const out = [];
+            for (const x of arr) {
+                if (!x) continue;
+                // Common shapes: {time, text}, {t, txt}, [time, text]
+                if (Array.isArray(x) && x.length >= 2) {
+                    const t = Number(x[0]);
+                    const text = (x[1] == null ? '' : String(x[1]));
+                    if (isFinite(t)) out.push({ time: t, text });
+                    continue;
+                }
+                if (typeof x === 'object') {
+                    const tRaw = (x.time != null ? x.time : (x.t != null ? x.t : (x.start != null ? x.start : null)));
+                    const t = Number(tRaw);
+                    const text = (x.text != null ? x.text : (x.txt != null ? x.txt : (x.content != null ? x.content : '')));
+                    if (isFinite(t)) {
+                        out.push({ time: t, text: String(text || '') });
+                        continue;
+                    }
+                }
+            }
+            // If time looks like ms, convert to seconds
+            if (out.length) {
+                const maxT = Math.max.apply(null, out.map((o) => o.time));
+                if (isFinite(maxT) && maxT > 1000) {
+                    return out.map((o) => ({ time: o.time / 1000, text: o.text }));
+                }
+            }
+            return out.length ? out : null;
+        } catch (e) {}
+        return null;
+    }
+
+    parseLrcString(lrcText) {
+        try {
+            const lines = (lrcText || '').toString().split(/\r?\n/);
+            const out = [];
+            const timeRe = /\[(\d{1,2}):(\d{1,2})(?:\.(\d{1,3}))?\]/g;
+            for (const line of lines) {
+                if (!line) continue;
+                let match;
+                let lastIndex = 0;
+                const times = [];
+                while ((match = timeRe.exec(line))) {
+                    lastIndex = timeRe.lastIndex;
+                    const mm = parseInt(match[1], 10);
+                    const ss = parseInt(match[2], 10);
+                    const ms = match[3] ? parseInt(match[3].padEnd(3, '0'), 10) : 0;
+                    const t = (mm * 60) + ss + (ms / 1000);
+                    if (isFinite(t)) times.push(t);
+                }
+                if (!times.length) continue;
+                const text = line.slice(lastIndex).trim();
+                for (const t of times) {
+                    out.push({ time: t, text });
+                }
+            }
+            out.sort((a, b) => a.time - b.time);
+            return out.length ? out : null;
+        } catch (e) {}
+        return null;
+    }
+
+    seekAplayer(aplayer, sec) {
+        try {
+            if (aplayer && typeof aplayer.seek === 'function') {
+                aplayer.seek(sec);
+                return;
+            }
+        } catch (e) {}
+        try {
+            const audio = aplayer && aplayer.audio;
+            if (audio && typeof audio.currentTime === 'number') {
+                audio.currentTime = sec;
+            }
+        } catch (e) {}
+    }
+
+    formatTime(sec) {
+        const s = Math.max(0, Math.floor(sec));
+        const m = Math.floor(s / 60);
+        const r = s % 60;
+        return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0');
+    }
+
+    triggerLrcTimePill() {
+        try {
+            const wrap = document.querySelector('#Music-page .aplayer-lrc') || document.querySelector('.aplayer-lrc');
+            const contents = document.querySelector('#Music-page .aplayer-lrc-contents') || document.querySelector('.aplayer-lrc-contents');
+            if (!wrap || !contents) return;
+
+            // Ensure nodes exist before trying to activate one.
+            if (this._aplayerRef) {
+                try { this.enhanceLrcTimeNodes(this._aplayerRef); } catch (e) {}
+            }
+
+            const pNodes = Array.from(contents.querySelectorAll('p'));
+            if (!pNodes.length) return;
+
+            const wrapRect = wrap.getBoundingClientRect();
+            const centerY = wrapRect.top + (wrapRect.height / 2);
+
+            let best = null;
+            let bestDist = Infinity;
+            for (const p of pNodes) {
+                if (!p) continue;
+                const timeEl = p.querySelector(':scope > .music-lrc-time');
+                if (!timeEl || !timeEl.dataset || !timeEl.dataset.time) continue;
+                const r = p.getBoundingClientRect();
+                const y = r.top + (r.height / 2);
+                const dist = Math.abs(y - centerY);
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    best = p;
+                }
+            }
+
+            if (!best) return;
+
+            if (this._activeLrcTimeP && this._activeLrcTimeP !== best) {
+                try { this._activeLrcTimeP.classList.remove('music-lrc-time-active'); } catch (e) {}
+            }
+            this._activeLrcTimeP = best;
+            try { best.classList.add('music-lrc-time-active'); } catch (e) {}
+
+            if (this._lrcTimeHideTimer) {
+                try { clearTimeout(this._lrcTimeHideTimer); } catch (e) {}
+                this._lrcTimeHideTimer = 0;
+            }
+
+            this._lrcTimeHideTimer = setTimeout(() => {
+                try {
+                    if (this._activeLrcTimeP) this._activeLrcTimeP.classList.remove('music-lrc-time-active');
+                } catch (e) {}
+            }, 1200);
+        } catch (e) {}
+    }
+
+    bindLrcUserScroll() {
+        if (this._lrcUserScrollBound) return;
+        const wrap = document.querySelector('#Music-page .aplayer-lrc') || document.querySelector('.aplayer-lrc');
+        if (!wrap) return;
+
+        const bump = () => {
+            this._manualLrcScrollUntil = Date.now() + 1800;
+            try { this.triggerLrcTimePill(); } catch (e) {}
+        };
+
+        try {
+            wrap.addEventListener('wheel', bump, { passive: true });
+            wrap.addEventListener('touchstart', bump, { passive: true });
+            wrap.addEventListener('pointerdown', bump, { passive: true });
+            wrap.addEventListener('scroll', bump, { passive: true });
+        } catch (e) {
+            try { wrap.onwheel = bump; } catch (e2) {}
+        }
+
+        this._lrcUserScrollBound = true;
     }
 
     lrcUpdate() {
+        if (Date.now() < this._manualLrcScrollUntil) return;
         const aplayerLrcContents = document.querySelector('.aplayer-lrc-contents');
         if (!aplayerLrcContents) return;
-        const currentLrc = aplayerLrcContents.querySelector('p.aplayer-lrc-current');
+
+        const currentLrc = aplayerLrcContents.querySelector('p.aplayer-lrc-current') || document.querySelector('.aplayer-lrc-current');
         if (!currentLrc) return;
+
+        // Ensure time badges get injected when lyrics become available.
+        try {
+            if (!this._lrcTimeEnhanced && this._aplayerRef) {
+                this.enhanceLrcTimeNodes(this._aplayerRef);
+            }
+        } catch (e) {}
 
         const currentIndex = Array.from(aplayerLrcContents.children).indexOf(currentLrc);
         if (currentIndex === this._lastLrcIndex) return;
         this._lastLrcIndex = currentIndex;
 
-        const wrap = document.querySelector('#Music-page .aplayer-lrc');
+        const wrap = document.querySelector('#Music-page .aplayer-lrc') || document.querySelector('.aplayer-lrc');
         if (!wrap) return;
-        const cs = window.getComputedStyle ? window.getComputedStyle(wrap) : null;
-        const padTop = cs ? (parseFloat(cs.paddingTop) || 0) : 0;
-        // Translate is applied to `.aplayer-lrc-contents`, whose layout origin starts after wrap's padding.
-        // To center the current line in the *visual* middle of the wrap, compensate padding-top here.
-        const ratio = (window.matchMedia && window.matchMedia('(max-width: 798px)').matches) ? 0.5 : 0.36;
-        const anchor = (wrap.clientHeight * ratio) - padTop;
-        const y = anchor - (currentLrc.offsetTop + currentLrc.offsetHeight / 2);
-        aplayerLrcContents.style.transform = `translateY(${y}px)`;
+
+        try { aplayerLrcContents.style.transform = ''; } catch (e) {}
+
+        const ratio = 0.5;
+        const target = currentLrc.offsetTop - (wrap.clientHeight * ratio) + (currentLrc.offsetHeight / 2);
+        const next = Math.max(0, Math.min(target, wrap.scrollHeight - wrap.clientHeight));
+        wrap.scrollTop = next;
     }
 
     handleKeydown(event) {
-        const aplayer = document.querySelector('meting-js').aplayer;
+        let aplayer;
+        try {
+            const meting = document.querySelector('#Music-page meting-js') || document.querySelector('meting-js');
+            aplayer = meting && meting.aplayer;
+        } catch (e) {}
+        if (!aplayer) return;
+
         const actions = {
             "Space": () => aplayer.toggle(),
             "ArrowRight": () => aplayer.skipForward(),
@@ -334,15 +771,31 @@ class MusicPlayer {
 
     destroy() {
         document.removeEventListener("keydown", this._onKeydown);
-        try { if (this._coverObserver) this._coverObserver.disconnect(); } catch (e) {}
-        this._coverObserver = null;
+        try { window.removeEventListener('resize', this._onResize); } catch (e) {}
+        try {
+            if (window.visualViewport && window.visualViewport.removeEventListener) {
+                window.visualViewport.removeEventListener('resize', this._onResize);
+            }
+        } catch (e) {}
+        if (this._lrcTimeObserver) {
+            try { this._lrcTimeObserver.disconnect(); } catch (e) {}
+            this._lrcTimeObserver = null;
+        }
+        if (this._lrcTimeHideTimer) {
+            try { clearTimeout(this._lrcTimeHideTimer); } catch (e) {}
+            this._lrcTimeHideTimer = 0;
+        }
+        if (this._coverObserver) {
+            try { this._coverObserver.disconnect(); } catch (e) {}
+            this._coverObserver = null;
+        }
     }
 }
 
 function initializeMusicPlayer() {
-const exitingMusic = window.scoMusic;
-if (exitingMusic) exitingMusic.destroy();
-window.scoMusic = new MusicPlayer();
+    const exitingMusic = window.scoMusic;
+    if (exitingMusic) exitingMusic.destroy();
+    window.scoMusic = new MusicPlayer();
 }
 
 function solitudeNeteaseEncryptId(id) {
